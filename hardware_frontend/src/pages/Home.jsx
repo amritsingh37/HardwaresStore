@@ -13,11 +13,13 @@ export default function Home() {
   useEffect(() => {
     api
       .get("/categories")
-      .then((res) => setCategories(res.data))
+      .then((res) => setCategories(Array.isArray(res.data) ? res.data : []))
       .catch(() => {});
     api
       .get("/products?limit=4")
-      .then((res) => setProducts(res.data.products))
+      .then((res) =>
+        setProducts(Array.isArray(res.data?.products) ? res.data.products : []),
+      )
       .catch(() => {});
   }, []);
 
