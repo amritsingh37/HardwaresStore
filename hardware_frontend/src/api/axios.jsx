@@ -8,4 +8,14 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use((response) => {
+  const contentType = response.headers["content-type"] || "";
+
+  if (contentType.includes("text/html")) {
+    return Promise.reject(new Error("The API returned the website instead of data."));
+  }
+
+  return response;
+});
+
 export default api;
