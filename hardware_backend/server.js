@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const path = require('path');           
+const path = require('path');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
@@ -26,7 +26,7 @@ app.use('/api/orders', orderRoutes);
 // ---- Serve React build (Vite dist) ----
 app.use(express.static(path.join(__dirname, '../hardware_frontend/dist')));
 
-app.get('*', (req, res) => {
+app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(__dirname, '../hardware_frontend/dist', 'index.html'));
 });
 // ---- End of static/catch-all block ----
@@ -35,10 +35,6 @@ app.get('*', (req, res) => {
 // since everything else is handled by the catch-all above
 app.use(notFound);
 app.use(errorHandler);
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Shiva Hardware API running on port ${PORT}`));
