@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');           
 const cors = require('cors');
 const connectDB = require('./config/db');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
@@ -22,6 +23,16 @@ app.use('/api/products', productRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/orders', orderRoutes);
 
+// ---- Serve React build (Vite dist) ----
+app.use(express.static(path.join(__dirname, '../hardware_frontend/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../hardware_frontend/dist', 'index.html'));
+});
+// ---- End of static/catch-all block ----
+
+// notFound and errorHandler should now only catch stray /api/* routes,
+// since everything else is handled by the catch-all above
 app.use(notFound);
 app.use(errorHandler);
 
