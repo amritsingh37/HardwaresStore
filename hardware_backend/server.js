@@ -39,6 +39,36 @@ app.get('/api/seed-admin-temp-xyz123', async (req, res) => {
   }
 });
 
+app.get('/api/seed-categories-temp-xyz123', async (req, res) => {
+  try {
+    const Category = require('./models/Category');
+
+    const categories = [
+      { name: 'Hand Tools', slug: 'hand-tools' },
+      { name: 'Power Tools', slug: 'power-tools' },
+      { name: 'Plumbing', slug: 'plumbing' },
+      { name: 'Electrical', slug: 'electrical' },
+      { name: 'Paint & Supplies', slug: 'paint-supplies' },
+      { name: 'Fasteners', slug: 'fasteners' },
+    ];
+
+    const results = [];
+    for (const cat of categories) {
+      const existing = await Category.findOne({ slug: cat.slug });
+      if (!existing) {
+        await Category.create(cat);
+        results.push(`Created: ${cat.name}`);
+      } else {
+        results.push(`Already exists: ${cat.name}`);
+      }
+    }
+
+    res.json({ message: 'Done', results });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
