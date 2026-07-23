@@ -29,6 +29,16 @@ export default function AdminOrders() {
     }
   };
 
+  const deleteOrder = async (id) => {
+    if (!window.confirm("Delete this order? This cannot be undone.")) return;
+    try {
+      await api.delete(`/orders/${id}`);
+      setOrders((prev) => prev.filter((o) => o._id !== id));
+    } catch (err) {
+      alert(err.response?.data?.message || "Could not delete order.");
+    }
+  };
+
   return (
     <div className="section">
       <div className="wrap">
@@ -125,15 +135,30 @@ export default function AdminOrders() {
                   <div className="tag">
                     <span className="hole"></span>Total: ₹{o.totalAmount}
                   </div>
-                  {o.status !== "delivered" && (
+                  <div style={{ display: "flex", gap: 10 }}>
+                    {o.status !== "delivered" && (
+                      <button
+                        onClick={() => markCompleted(o._id)}
+                        className="send-btn"
+                        style={{ padding: "8px 16px", fontSize: 12 }}
+                      >
+                        Mark as completed
+                      </button>
+                    )}
                     <button
-                      onClick={() => markCompleted(o._id)}
-                      className="send-btn"
-                      style={{ padding: "8px 16px", fontSize: 12 }}
+                      onClick={() => deleteOrder(o._id)}
+                      style={{
+                        background: "none",
+                        border: "1px solid var(--oxide)",
+                        color: "var(--oxide)",
+                        padding: "8px 16px",
+                        fontSize: 12,
+                        cursor: "pointer",
+                      }}
                     >
-                      Mark as completed
+                      Delete
                     </button>
-                  )}
+                  </div>
                 </div>
               </div>
             ))}
